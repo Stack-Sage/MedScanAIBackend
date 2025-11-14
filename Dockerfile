@@ -1,27 +1,33 @@
-FROM python:3.11-slim
+# Use an official lightweight Python image
+FROM python:3.10-slim
 
-# Install system dependencies for OpenCV
+# Prevents Python from writing .pyc files and using buffering
+ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONUNBUFFERED=1
+
+# Install system dependencies (TensorFlow needs these)
 RUN apt-get update && apt-get install -y \
-    libgl1 \
-    libglib2.0-0 \
-    libsm6 \
-    libxrender1 \
-    libxext6 \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    python3-dev \
+    wget \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /app
 
-# Copy dependency file
+# Install Python dependencies first (for caching)
 COPY requirements.txt .
 
-# Install Python dependencies
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --upgrade pip
+RUN pip install -r requirements.txt
 
-# Copy project files
+# Copy all project files
 COPY . .
 
+# Expose port (Railway/Render will override automatically)
 EXPOSE 8000
 
-# Run FastAPI with Uvicorn
+# Start the app (FastAPI + Uvicorn)
 CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
