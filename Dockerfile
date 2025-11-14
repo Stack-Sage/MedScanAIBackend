@@ -1,28 +1,46 @@
+# ---------------------------
+# Base Python image
+# ---------------------------
 FROM python:3.10-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-
-# Install dependencies for TensorFlow + OpenCV (Debian 12 compatible)
+# ---------------------------
+# Install system dependencies
+# ---------------------------
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
     libsm6 \
     libxext6 \
-    libxrender-dev \
+    libxrender1 \
     libglib2.0-0 \
-    libgl1 \
     && rm -rf /var/lib/apt/lists/*
 
+# ---------------------------
+# Set working directory
+# ---------------------------
 WORKDIR /app
 
+# ---------------------------
+# Copy dependency files
+# ---------------------------
 COPY requirements.txt .
 
-RUN pip install --upgrade pip
+# ---------------------------
+# Install Python packages
+# ---------------------------
 RUN pip install --no-cache-dir -r requirements.txt
 
+# ---------------------------
+# Copy entire app code
+# ---------------------------
 COPY . .
 
+# ---------------------------
+# Expose FastAPI port
+# ---------------------------
 EXPOSE 8000
 
+# ---------------------------
+# Start the app
+# ---------------------------
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
