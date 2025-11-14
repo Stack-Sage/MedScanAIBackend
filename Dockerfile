@@ -1,11 +1,6 @@
-# ---------------------------
-# Base Python image
-# ---------------------------
 FROM python:3.10-slim
 
-# ---------------------------
-# Install system dependencies
-# ---------------------------
+# Install required system libraries
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -15,32 +10,13 @@ RUN apt-get update && apt-get install -y \
     libglib2.0-0 \
     && rm -rf /var/lib/apt/lists/*
 
-# ---------------------------
-# Set working directory
-# ---------------------------
 WORKDIR /app
 
-# ---------------------------
-# Copy dependency files
-# ---------------------------
 COPY requirements.txt .
-
-# ---------------------------
-# Install Python packages
-# ---------------------------
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ---------------------------
-# Copy entire app code
-# ---------------------------
 COPY . .
 
-# ---------------------------
-# Expose FastAPI port
-# ---------------------------
 EXPOSE 8000
 
-# ---------------------------
-# Start the app
-# ---------------------------
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
