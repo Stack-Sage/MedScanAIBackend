@@ -1,10 +1,16 @@
-# Use official slim Python image
+# -------------------------------
+# Base image
+# -------------------------------
 FROM python:3.10-slim
 
+# -------------------------------
 # Set working directory
+# -------------------------------
 WORKDIR /app
 
-# Install system dependencies for OpenCV, etc.
+# -------------------------------
+# Install system dependencies
+# -------------------------------
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -15,19 +21,34 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy requirements and install Python dependencies
+# -------------------------------
+# Install Python dependencies
+# -------------------------------
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy app and models
+# -------------------------------
+# Copy application code
+# -------------------------------
 COPY app ./app
-COPY saved_models ./saved_models
 
-# Ensure upload folder exists
-RUN mkdir -p app/static/uploads
+# -------------------------------
+# Copy model download script
+# -------------------------------
+COPY download_model.sh /app/download_model.sh
+RUN chmod +x /app/download_model.sh
 
+# -------------------------------
+# Create uploads folder
+# -------------------------------
+RUN mkdir -p /app/app/static/uploads
+
+# -------------------------------
 # Expose port
+# -------------------------------
 EXPOSE 8000
 
-# Run FastAPI using uvicorn
-CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+# -------------------------------
+# Start container using the download script
+# -------------------------------
+CMD ["/app/download_model.sh"]
