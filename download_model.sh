@@ -1,15 +1,16 @@
 #!/bin/bash
-set -e  # stop if any command fails
+set -e
 
-# Create saved_models folder if it doesn't exist
+# Create saved_models folder
 mkdir -p /app/saved_models
 
-# Download the model using gdown
-MODEL_ID="1AbCDEfgHIjkLMNOPqrSTuvWxYz"
+# Google Drive model ID
+MODEL_ID="1A2b3C4d5E6F7g8H9I0JklMnOpQrStUv"
 MODEL_PATH="/app/saved_models/vgg16_medical.h5"
 
+# Download model if missing
 if [ ! -f "$MODEL_PATH" ]; then
-    echo "Downloading model..."
+    echo "Downloading VGG16 model..."
     gdown "https://drive.google.com/uc?id=${MODEL_ID}" -O "$MODEL_PATH"
 else
     echo "Model already exists, skipping download."
