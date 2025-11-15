@@ -2,7 +2,7 @@
 set -e
 
 # Create saved_models folder in root
-mkdir -p /saved_models
+mkdir -p saved_models
 
 # Google Drive model ID
 MODEL_ID="1HhLKKSu1iG0iEBnDB5BTqDlMdTSgnyKM"
