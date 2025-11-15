@@ -1,16 +1,8 @@
-# -------------------------------
-# Base image
-# -------------------------------
 FROM python:3.10-slim
 
-# -------------------------------
-# Set working directory
-# -------------------------------
 WORKDIR /app
 
-# -------------------------------
-# Install system dependencies
-# -------------------------------
+# System dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
     cmake \
@@ -21,34 +13,26 @@ RUN apt-get update && apt-get install -y \
     wget \
     && rm -rf /var/lib/apt/lists/*
 
-# -------------------------------
-# Install Python dependencies
-# -------------------------------
+# Python dependencies
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install gdown
 
-# -------------------------------
-# Copy application code
-# -------------------------------
+# Copy app code
 COPY app ./app
 
-# -------------------------------
-# Copy model download script
-# -------------------------------
+# Copy saved models (classes.json already there)
+COPY saved_models ./saved_models
+
+# Copy and make the download script executable
 COPY download_model.sh /app/download_model.sh
 RUN chmod +x /app/download_model.sh
 
-# -------------------------------
 # Create uploads folder
-# -------------------------------
 RUN mkdir -p /app/app/static/uploads
 
-# -------------------------------
 # Expose port
-# -------------------------------
 EXPOSE 8000
 
-# -------------------------------
-# Start container using the download script
-# -------------------------------
+# Start container with the download script
 CMD ["/app/download_model.sh"]
