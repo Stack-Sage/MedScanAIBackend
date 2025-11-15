@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-# Create saved_models folder in root
+# Create saved_models folder inside your project (relative path)
 mkdir -p saved_models
 
 # Google Drive model ID
 MODEL_ID="1HhLKKSu1iG0iEBnDB5BTqDlMdTSgnyKM"
-MODEL_PATH="/saved_models/vgg16_medical.h5"
+MODEL_PATH="saved_models/vgg16_medical.h5"  # relative path, matches your FastAPI code
 
 # Download model if missing
 if [ ! -f "$MODEL_PATH" ]; then
